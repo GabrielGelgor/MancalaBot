@@ -23,8 +23,35 @@ def printNextMove(player, player1Mancala, player1Marbles, player2Mancala, player
 '''
 Main function. A/B Pruning is a feature of our minimax costing algorithm, so let's just roll the two into a single function.
 '''
-def minimax_pruned(treeRoot): #Recursively explores the tree, rating nodes as they are reached. If we reach a place where the tree can be pruned, then we do NOT rate it.
-    # TODO: Plan algorithm
+def minimax_pruned(treeRoot, max_depth, alpha, beta, maxer): #Recursively explores the tree, rating nodes as they are reached. If we reach a place where the tree can be pruned, then we do NOT rate it.
+    #Alpha and beta can be considered as a 'give me a better price or leave' metric. If the minimizer has a beta and the maximizer provides something higher than it, the minimizer will ignore the bargain - and visa versa.
+        #if beta is less than alpha, then the opposing party being offered this deal will NEVER want the deal as the lowest acceptable bondary has been crossed.
+
+    #If (current depth = 0 (maximum depth to be allowed)) or (current game board is in a finished state):
+    #   If the board is in a finished state, set heuristic value to 100% win rate for that node
+    #   Else run the heuristic function, returning that evaluation of the node.
+    # 
+    #If the current player is the one seeking the maximum evaluation:
+    #   current_max_eval = -infinity
+    #   new_frontier = expand(current node)
+    #   for each of the children in the frontier:
+    #       evaluation = minimax_pruned(cur_child, current depth - 1, alpha, beta, (true/false depending on next player in this position))
+    #       current_max_eval = max(current_max_eval, evaluation)
+    #       alpha = max(alpha, evaluation)
+    #       if beta <= alpha: <-- which is to say, if the MINIMIZER(opponent) before had a better option earlier on in this depth the tree, don't bother continuing down this line of computing
+    #           break
+    #       return the best possible move assuming that the opponent took the best move. (current_max_eval)
+    #
+    #If the current player is the one seeking the minimum evaluation:
+    #   current_min_eval = infinity
+    #   new_frontier = expand(current node)
+    #   for each of the children in the frontier:
+    #       evaluation = minimax_pruned(cur_child, current depth - 1, alpha, beta, (true/false depending on next player in this position))
+    #       current_min_eval = min(current_min_eval, evaluation)
+    #       beta = min(beta, evaluation)
+    #       if beta <= alpha: <-- which is to say, if the MAXIMIZER(opponent) before had a better option earlier on in this depth the tree, don't bother continuing down this line of computing
+    #           break
+    #       return the best possible move assuming that the opponent took the best move. (current_min_eval) #
     
     
     return 0

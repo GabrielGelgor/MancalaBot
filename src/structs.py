@@ -1,10 +1,11 @@
 import math
 
 class node:
-    def __init__(self, parent, player, state):
+    def __init__(self, parent, player, state, mancalas):
         self.parent = parent
         self.player = player
-        self.state = state                      #State of the board, includes scores for each player. Represented as 2d array
+        self.state = state                      #State of the board, excluding mancalas
+        self.mancalas = mancalas                #Mancala array - 0 for player 1, 1 for player 2.
         self.value = float("-inf")
 
     def expand(self):
