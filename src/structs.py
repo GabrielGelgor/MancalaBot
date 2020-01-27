@@ -8,20 +8,24 @@ class node:
         self.value = float("-inf")
 
     def expand(self):
-        #for every possible child
-        for child in range(1, len(self.state[0])):
-            break
-            #calculate new board state from the current state. Base move on iterator  
-            #for every marble in this hole:
-                #
-            #generate node using current player as parent, and state
-            #Add node to frontier
+        #Define output list, called 'frontier'
+        #Get the number of possible moves
+        #Using current player, determine which row to take moves from
+
+        #For the number of possible moves: <- move = iterator
+        #   Take the move starting at position (move) in row (player_row)
+        #   Save the return value of takeMove, separating out the new board state and who the next player will be.
+        #   Use these values to generate a new child node. Append this to our output: frontier#
+
+        #Return the new frontier!
+
         return 0
 
     def takeMove(self, move, player):
         cur_state = self.state[:]
 
         #Determine the row and direction for this move based on the player
+        #Subtract 1 from move to bring it in line with 0 indexing
 
         #Remove all the marbles from the hole they were taken from
         #Add these marbles to your "hand" 
@@ -47,16 +51,16 @@ class node:
         return 0
 
     def evalBoard(self): #Determine whether or not this board is in a win state
-        #Scan the current board, if it is in a win state, return so. Else, return not.
-        end = false
-        for i in range(len(self.state)) 
+        #Scan the current board, if it is in a win state, return so. Else, return not. TODO: Refactor
+        end = False
+        for i in range(len(self.state)): 
             if (i == 0):
-                for j in range(len(self.state[i]))
+                for j in range(len(self.state[i])):
                     if (self.state[i][j] != 0):
-                        end = true
+                        end = True
             if (i == 1):
-                for j in range(len(self.state[i]))
+                for j in range(len(self.state[i])):
                     if (self.state[i][j] != 0):
-                        end = true
+                        end = True
         return end
 
