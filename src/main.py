@@ -24,38 +24,66 @@ def printNextMove(player, player1Mancala, player1Marbles, player2Mancala, player
 '''
 Main function. A/B Pruning is a feature of our minimax costing algorithm, so let's just roll the two into a single function.
 '''
-def minimax_pruned(treeRoot, max_depth, alpha, beta, maxer): #Recursively explores the tree, rating nodes as they are reached. If we reach a place where the tree can be pruned, then we do NOT rate it.
+def minimax_pruned(treeRoot, cur_depth, alpha, beta, maxer): #Recursively explores the tree, rating nodes as they are reached. If we reach a place where the tree can be pruned, then we do NOT rate it.
     #Alpha and beta can be considered as a 'give me a better price or leave' metric. If the minimizer has a beta and the maximizer provides something higher than it, the minimizer will ignore the bargain - and visa versa.
         #if beta is less than alpha, then the opposing party being offered this deal will NEVER want the deal as the lowest acceptable bondary has been crossed.
 
     #If (current depth = 0 (maximum depth to be allowed)) or (current game board is in a finished state):
+    if (cur_depth == 0):
     #   If the board is in a finished state, set heuristic value to 100% win rate for that node
+        if (treeRoot.evalBoard()):
+            return 1
+
     #   Else run the heuristic function, returning that evaluation of the node.
+        else:
+            '''THIS IS WHERE WE KEEP THE HEURISTIC CALL'''
+            return score_monteCarlo(treeRoot, 2, treeRoot.player)
     # 
     #If the current player is the one seeking the maximum evaluation:
+    if (maxer):
     #   current_max_eval = -infinity
+        cur_max_eval = float("-inf")
     #   new_frontier = expand(current node)
+        new_frontier = treeRoot.expand()
     #   for each of the children in the frontier:
+        for child in new_frontier:
     #       evaluation = minimax_pruned(cur_child, current depth - 1, alpha, beta, (true/false depending on next player in this position))
+            next_player = True if (child.player == 1) else False
+            p_eval = minimax_pruned(child, cur_depth - 1, alpha, beta, next_player)
     #       current_max_eval = max(current_max_eval, evaluation)
+            cur_max_eval = max(cur_max_eval, p_eval)
     #       alpha = max(alpha, evaluation)
+            alpha = max(alpha, p_eval)
     #       if beta <= alpha: <-- which is to say, if the MINIMIZER(opponent) before had a better option earlier on in this depth the tree, don't bother continuing down this line of computing
+            if (beta <= alpha):
     #           break
+                break
+
     #       return the best possible move assuming that the opponent took the best move. (current_max_eval)
+        return cur_max_eval
     #
+
     #If the current player is the one seeking the minimum evaluation:
+    else:
     #   current_min_eval = infinity
+        cur_min_eval = float("inf")
     #   new_frontier = expand(current node)
+        new_frontier = treeRoot.expand()
     #   for each of the children in the frontier:
+        for child in new_frontier:
     #       evaluation = minimax_pruned(cur_child, current depth - 1, alpha, beta, (true/false depending on next player in this position))
+            next_player = True if (child.player == 1) else False
+            p_eval = minimax_pruned(child, cur_depth - 1, alpha, beta, next_player)
     #       current_min_eval = min(current_min_eval, evaluation)
+            cur_min_eval = min(cur_min_eval, p_eval)
     #       beta = min(beta, evaluation)
+            beta = min(beta, p_eval)
     #       if beta <= alpha: <-- which is to say, if the MAXIMIZER(opponent) before had a better option earlier on in this depth the tree, don't bother continuing down this line of computing
+            if (beta <= alpha):
     #           break
+                break
     #       return the best possible move assuming that the opponent took the best move. (current_min_eval) #
-    
-    
-    return 0
+        return cur_min_eval
 
 def score_monteCarlo(c_node, max_time, player): #Generates the cost of this node based on how well it does in a Monte-carlo sim TODO: Triple check to make sure everything is fleshed out.
 
