@@ -1,5 +1,5 @@
 from structs import node
-import math
+import math, time, random
 
 #Read Input
 player = int(input())
@@ -15,6 +15,7 @@ def printNextMove(player, player1Mancala, player1Marbles, player2Mancala, player
     state2 = mancala2_marbles[:] 
     boardState = [state1, state2]
 
+    #TODO: Fuse mancals into single 1d list
     #TODO: Place Minimax here based off of initial board as root.
      
     print("output")
@@ -56,25 +57,60 @@ def minimax_pruned(treeRoot, max_depth, alpha, beta, maxer): #Recursively explor
     
     return 0
 
-def score_monteCarlo(node, max_time): #Generates the cost of this node based on how well it does in a Monte-carlo sim
+def score_monteCarlo(c_node, max_time, player): #Generates the cost of this node based on how well it does in a Monte-carlo sim TODO: Triple check to make sure everything is fleshed out.
 
     #Calculate the range of moves we can take (what numbers are considered valid moves)
+    time_start = time.time()        #NOTE: We will probably want to see how many games that the algorithm can complete in x seconds...
+    cur_time = 0
+    sim_kernel = node(c_node.parent, c_node.player, c_node.state, c_node.mancalas)
+    wins = 0
+    games = 0
+
     #While we're within our max simulation time:
+    while(cur_time <= max_time):
     #   set our 'simulation node's boardstate (sim kernel, bc that sounds cool) to be our base node's boardstate
+        sim_kernel.state = c_node.state
+        sim_kernel.mancalas = c_node.mancalas
     #   
     #   While we're within our time limit: (This loop is for a single game simulation)
+        while(cur_time <= max_time):
     #       check board for any holes with 0 balls, avoid them.
+            move_range = []
+            row = 0 if(sim_kernel.player == 1) else 1
+
+            for i in range(len(sim_kernel.state[row])):
+                if (sim_kernel.state[row][i] > 0):
+                    move_range.append(i+1)                              #Accounts for move 0-indexing
+            
     #       randomly generate an allowable move (exclude any 0-holes)
+            move = move_range[random.randint(0,len(move_range))]
     #       Generate boardstate after move, save it.
+            results = sim_kernel.takeMove(move)
+            sim_kernel.state = results[0]
+            sim_kernel.mancalas = results[1]
+            sim_kernel.player = results[2]
     #       Evaluate the boardstate - is the game over?
-    #           yes:
-    #               Did we win? Update win rate of this node accordingly.
-    #               break from this current game loop.
+            if (sim_kernel.evalBoard()):
+    #       yes:
+    #       Did we win? Update win rate of this node accordingly.
+                if ((player == 1) and (sim_kernel.mancalas[0] > sim_kernel.mancalas[1])):
+                    wins += 1
+                    games += 1
+    #       break from this current game loop.
+                elif ((player == 2) and (sim_kernel.mancalas[0] < sim_kernel.mancalas[1])):
+                    wins += 1
+                    games += 1
+                else:
+                    games += 1
+                
+                cur_time = time.time() - time_start
+                break
     #           no:
     #               continue this game loop 
+        cur_time = time.time() - time_start
     # 
     #Return the total winrate of this node#
-    return 0
+    return (wins/games)
 
 def hScore(player, move, boardState): #TODO: Refactor
 

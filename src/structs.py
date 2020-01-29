@@ -10,19 +10,22 @@ class node:
 
     def expand(self):
         #Define output list, called 'frontier'
+        frontier = []
         #Get the number of possible moves
-        #Using current player, determine which row to take moves from
+        b = len(self.state[0]) #b = branching factor
 
         #For the number of possible moves: <- move = iterator
+        for move in range(b):
         #   Take the move starting at position (move) in row (player_row)
         #   Save the return value of takeMove, separating out the new board state and who the next player will be.
+            Move = self.takeMove(move, self.player)
         #   Use these values to generate a new child node. Append this to our output: frontier#
-
+            frontier.append(node(self,Move[2], Move[0], Move[1]))
+        
         #Return the new frontier!
+        return frontier
 
-        return 0
-
-    def takeMove(self, move, player):
+    def takeMove(self, move, player=self.player):
         cur_state = self.state[:]
         cur_mancala = self.mancalas[:]
 
