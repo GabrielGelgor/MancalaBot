@@ -9,6 +9,7 @@ class node:
         self.value = float("-inf")
 
     def expand(self):
+        #TODO: add string parser to convert into nodes 
         #Define output list, called 'frontier'
         frontier = []
         #Get the number of possible moves
@@ -18,9 +19,9 @@ class node:
         for move in range(b):
         #   Take the move starting at position (move) in row (player_row)
         #   Save the return value of takeMove, separating out the new board state and who the next player will be.
-            Move = self.takeMove(move, self.player)
+            Move = str(self.takeMove(move, self.player))
         #   Use these values to generate a new child node. Append this to our output: frontier#
-            frontier.append(node(self,Move[2], Move[0], Move[1]))
+            frontier.append(Move)
         
         #Return the new frontier!
         return frontier
