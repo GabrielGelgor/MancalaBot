@@ -111,9 +111,12 @@ def score_monteCarlo(c_node, max_time, player): #Generates the cost of this node
                     move_range.append(i+1)                              #Accounts for move 0-indexing
             
     #       randomly generate an allowable move (exclude any 0-holes)
-            move = move_range[random.randint(0,len(move_range))]
+             try:
+                move = move_range[random.randrange(0, len(move_range))]
+            except ValueError:
+                return (wins / games)
     #       Generate boardstate after move, save it.
-            results = sim_kernel.takeMove(move)
+            results = sim_kernel.takeMove(move, player)
             sim_kernel.state = results[0]
             sim_kernel.mancalas = results[1]
             sim_kernel.player = results[2]
@@ -124,15 +127,15 @@ def score_monteCarlo(c_node, max_time, player): #Generates the cost of this node
                 if ((player == 1) and (sim_kernel.mancalas[0] > sim_kernel.mancalas[1])):
                     wins += 1
                     games += 1
+                    break
     #       break from this current game loop.
-                elif ((player == 2) and (sim_kernel.mancalas[0] < sim_kernel.mancalas[1])):
+                elif ((player == 2) and (sim_kernel.mancalas[0] < sim_kernel.mancalas[1])): #TODO: do we not have to consider the case where the other player won the full game on your own move? 
                     wins += 1
                     games += 1
-                else:
-                    games += 1
-                
+                    break
+            else:
+                games += 1  
                 cur_time = time.time() - time_start
-                break
     #           no:
     #               continue this game loop 
         cur_time = time.time() - time_start

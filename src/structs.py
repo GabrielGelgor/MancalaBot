@@ -26,7 +26,7 @@ class node:
         #Return the new frontier!
         return frontier
 
-    def takeMove(self, move, player=self.player): 
+    def takeMove(self, move, player): 
         cur_state = self.state[:]
         cur_mancala = self.mancalas[:]
 
@@ -95,17 +95,20 @@ class node:
         return (cur_state, cur_mancala, player, row)  # TODO: Make sure that a varaible keeps track of which is the next player.
 
 
-    def evalBoard(self): #Determine whether or not this board is in a win state
-        #Scan the current board, if it is in a win state, return so. Else, return not. TODO: Refactor
-        end = True
-        for i in range(len(self.state)): 
+    def evalBoard(self):  # Determine whether or not this board is in a win state
+        # Scan the current board, if it is in a win state, return so. Else, return not. TODO: Refactor
+        end = False
+        counterP1 = 0
+        counterP2 = 0
+        for i in range(len(self.state)):
             if (i == 0):
                 for j in range(len(self.state[i])):
-                    if (self.state[i][j] != 0):
-                        end = False
+                    if (self.state[i][j] == 0):
+                        counterP1 += 1
             if (i == 1):
                 for j in range(len(self.state[i])):
-                    if (self.state[i][j] != 0):
-                        end = False
+                    if (self.state[i][j] == 0):
+                        counterP2 += 1
+        if (counterP1 == 6 or counterP2 == 6):
+            end = True
         return end
-
