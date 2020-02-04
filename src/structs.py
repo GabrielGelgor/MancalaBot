@@ -20,7 +20,8 @@ class node:
         #   Save the return value of takeMove, separating out the new board state and who the next player will be.
             Move = self.takeMove(move, self.player)
         #   Use these values to generate a new child node. Append this to our output: frontier#
-            frontier.append(Move)
+            frontier.append(node(self, copy.deepcopy(Move[2]), copy.deepcopy(Move[0]), copy.deepcopy(Move[1])))
+
         
         #Return the new frontier!
         return frontier

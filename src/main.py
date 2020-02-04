@@ -41,7 +41,7 @@ def minimax_pruned(treeRoot, cur_depth, alpha, beta, maxer, original): #Recursiv
     #   Else run the heuristic function, returning that evaluation of the node.
         else:
             '''THIS IS WHERE WE KEEP THE HEURISTIC CALL'''                              
-            heuristic = score_monteCarlo(treeRoot, 2, treeRoot.player)  #NOTE: might need to tweak time
+            heuristic = score_monteCarlo(treeRoot, 1, treeRoot.player)  #NOTE: might need to tweak time
             if (treeRoot.player == original):
                 return (heuristic - 0.5)
             else:
@@ -118,9 +118,6 @@ def score_monteCarlo(c_node, max_time, player): #Generates the cost of this node
             for i in range(len(sim_kernel.state[row])):
                 if (sim_kernel.state[row][i] > 0):
                     move_range.append(i+1)    #Accounts for move 0-indexing
-            if (len(move_range) == 0 ):
-                break
-            
             
     #       randomly generate an allowable move (exclude any 0-holes)
             move = move_range[random.randrange(0, len(move_range))]
@@ -151,8 +148,11 @@ def score_monteCarlo(c_node, max_time, player): #Generates the cost of this node
                 elif ((player == 2) and (sim_kernel.mancalas[0] > sim_kernel.mancalas[1])):
                     games += 1
                     break
+                elif(sim_kernel.mancalas[0] == sim_kernel.mancalas[1]):
+                    games += 1
+                    break
             else:
-                games += 1  
+                  
                 cur_time = time.time() - time_start
     #           no:
     #               continue this game loop 
