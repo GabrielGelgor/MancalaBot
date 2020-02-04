@@ -1,4 +1,4 @@
-import math
+import math, copy
 
 class node:
     def __init__(self, parent, player, state, mancalas):
@@ -8,8 +8,7 @@ class node:
         self.mancalas = mancalas                #Mancala array - 0 for player 1, 1 for player 2.
         self.value = float("-inf")
 
-    def expand(self):
-        #TODO: add string parser to convert into nodes 
+    def expand(self): 
         #Define output list, called 'frontier'
         frontier = []
         #Get the number of possible moves
@@ -19,7 +18,7 @@ class node:
         for move in range(b):
         #   Take the move starting at position (move) in row (player_row)
         #   Save the return value of takeMove, separating out the new board state and who the next player will be.
-            Move = str(self.takeMove(move, self.player))
+            Move = self.takeMove(move, self.player)
         #   Use these values to generate a new child node. Append this to our output: frontier#
             frontier.append(Move)
         
@@ -27,8 +26,8 @@ class node:
         return frontier
 
     def takeMove(self, move, player): 
-        cur_state = self.state[:]
-        cur_mancala = self.mancalas[:]
+        cur_state = copy.deepcopy(self.state[:])
+        cur_mancala = copy.deepcopy(self.mancalas[:])
 
         # Determine the row and direction for this move based on the player
         row = 0 if (player == 1) else 1
@@ -36,7 +35,7 @@ class node:
         # Subtract 1 from move to bring it in line with 0 indexing
         indexed_move = move - 1
 
-        # Remove all the marbles from the hole they were taken from TODO: Check to see if there is nothing in that hole
+        # Remove all the marbles from the hole they were taken from
         # Add these marbles to your "hand"
         marbles = cur_state[row][indexed_move]
         cur_state[row][indexed_move] = 0
@@ -54,6 +53,10 @@ class node:
             if ((pointer_pos >= 0) and (pointer_pos < len(cur_state[row]))):
                 cur_state[row][pointer_pos] += 1
                 marbles -= 1
+                if (marbles == 0 and cur_state[row][pointer_pos] == 1 and (row == player-1)):
+                    oppositerow = 1 if (row == 0) else 0
+                    cur_state[row][pointer_pos] += cur_state[oppositerow][pointer_pos]
+                    cur_state[oppositerow][pointer_pos] = 0
             #
             #       no: row switch! do the following
             else:
@@ -67,7 +70,7 @@ class node:
                     marbles -= 1
 
                     if (marbles == 0):
-                        pass  # TODO: add in double turn feature, as well as feature for dropping last ball in empty hole
+                        return  (cur_state, cur_mancala, player) 
                     #           switch your row
                     row = 1 if (row == 0) else 0
                     #           switch your direction
@@ -90,9 +93,12 @@ class node:
             #
             displacement += 1
         #   add one to displacement counter#
-
+        if (player == 1):
+            player = 2
+        else:
+            player = 1
         # Return the new state, as well as the next player in the case of consecutive turns, return the side of the board you finally landed on.
-        return (cur_state, cur_mancala, player, row)  # TODO: Make sure that a varaible keeps track of which is the next player.
+        return (cur_state, cur_mancala, player) 
 
 
     def evalBoard(self):  # Determine whether or not this board is in a win state
