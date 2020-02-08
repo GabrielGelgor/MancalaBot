@@ -132,7 +132,7 @@ def minimax_pruned(treeRoot, cur_depth, alpha, beta, maxer, original):  # Recurs
     # If (current depth = 0 (maximum depth to be allowed)) or (current game board is in a finished state):
     if (cur_depth == 0):
         #   If the board is in a finished state, set heuristic value to 100% win rate for that node
-        if (treeRoot.evalBoard()):
+        '''  if (treeRoot.evalBoard()):
             winner = None
             if (treeRoot.mancalas[0] > treeRoot.mancalas[1]):
                 winner = 1
@@ -144,15 +144,21 @@ def minimax_pruned(treeRoot, cur_depth, alpha, beta, maxer, original):  # Recurs
                 return (0.5, None)
             else:
                 return (-0.5, None)
-
+        '''
         #   Else run the heuristic function, returning that evaluation of the node.
-        else:
-            '''THIS IS WHERE WE KEEP THE HEURISTIC CALL'''
-            heuristic = score_monteCarlo(treeRoot, 0.15, treeRoot.player)  # NOTE: might need to tweak time
-            if (treeRoot.player == original):
-                return ((heuristic - 0.5), None)
-            else:
-                return ((0.5 - heuristic), None)  # as 0.5 is the same winning chance for both players, we base our score off of how close/far we are from the 0.5 index
+        #else:
+            #'''THIS IS WHERE WE KEEP THE HEURISTIC CALL'''
+            
+        return static_heur(treeRoot, original), None
+            
+            #'''
+            #heuristic = score_monteCarlo(treeRoot, 0.15, treeRoot.player)  # NOTE: might need to tweak time
+            #if (treeRoot.player == original):
+            #    return ((heuristic - 0.5), None)
+            #else:
+            #    return ((0.5 - heuristic), None)  # as 0.5 is the same winning chance for both players, we base our score off of how close/far we are from the 0.5 index
+            #'''
+
     #
     # If the current player is the one seeking the maximum evaluation:
     if (maxer):
@@ -273,6 +279,19 @@ def score_monteCarlo(c_node, max_time,player):  # Generates the cost of this nod
     # Return the total winrate of this node#
     return (wins / games)
 
+def static_heur(state_node, original_player):
+    #h1 = number of marbles on your side of the board
+    row = 1 if (original_player == 1) else 0
+    h1 = sum(state_node.state[row])
+    #h2 = # in your mancala
+    manc = 0 if (original_player == 1) else 1
+    h2 = state_node.mancalas[manc]
+    #h3 = # in their mancala * -1 (want to minimize)
+    other_manc = 1 if (original_player == 1) else 0
+    h3 = -1*state_node.mancalas[other_manc]
+
+    return (h1 + h2 + h3)
+
 
 def printNextMove(player, player1Mancala, player1Marbles, player2Mancala, player2Marbles):
     bottomRow = player1Marbles[:]
@@ -284,7 +303,7 @@ def printNextMove(player, player1Mancala, player1Marbles, player2Mancala, player
     cur_min_eval = float("inf")
     maxer = True
     original = player
-    minimax = minimax_pruned(treeRoot, 2, cur_max_eval, cur_min_eval, maxer, original)
+    minimax = minimax_pruned(treeRoot, 3, cur_max_eval, cur_min_eval, maxer, original)
     # Send our player number to minimax as we are the original and we hardcode that we are maxer
     returnedVal = minimax[1]
     return(returnedVal)
@@ -295,4 +314,6 @@ mancala1 = int(input())
 mancala1_marbles = [int(i) for i in input().strip().split()]
 mancala2 = int(input())
 mancala2_marbles = [int(i) for i in input().strip().split()]
+
+
 print(printNextMove(inputPlayer, mancala1, mancala1_marbles, mancala2, mancala2_marbles))
